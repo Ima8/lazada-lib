@@ -1,4 +1,5 @@
 # Lazada non-official library
 
 ## Main feature 
-* Wrapper Request  
+* Auth
+* Sent Request with Hmac sign 
