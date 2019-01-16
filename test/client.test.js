@@ -60,5 +60,12 @@ test('addParam3Param', () => {
   expect(instance.params).toContainObject({"key": "key", "value": "value"})
   expect(instance.params).toContainObject({"key": "key2", "value": "value2"})
   expect(instance.params).toContainObject({"key": "key3", "value": "value3"})
+})
 
+test('execute', () => {
+  const instance = CLIENT.init("https://api.lazada.com.my/rest/", "", "")
+  let request = CLIENT.initRequest("/auth/token/refresh")
+  request = CLIENT.addApiParam(request, "refresh_token", "")
+
+  CLIENT.execute(instance,request,"")
 })
