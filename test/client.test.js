@@ -67,5 +67,11 @@ test('execute', () => {
   let request = CLIENT.initRequest("/auth/token/refresh")
   request = CLIENT.addApiParam(request, "refresh_token", "")
 
-  CLIENT.execute(instance,request,"")
+  return CLIENT.execute(instance, request, "").then((res) => {
+    const data = res.data
+    console.log(data);
+    const expectKey = ['account','access_token','code',"request_id","country","refresh_token","country_user_info_list","account_platform","refresh_expires_in","country_user_info","expires_in"]
+    expect(Object.keys(data).sort()).toEqual(expectKey.sort());
+    console.log(res);
+  })
 })

@@ -1,6 +1,7 @@
 const axios = require('axios');
 const crypto = require('crypto');
-const _  = require("lodash")
+const _ = require("lodash")
+
 function init(url, appId, secretKey) {
   if (url.length < 1) {
     throw new Error('url is empty!');
@@ -47,50 +48,86 @@ function addApiParam(instance, key, value) {
 }
 
 function sortByKey(array, key) {
-  return array.sort(function(a, b) {
-      var x = a[key]; var y = b[key];
-      return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+  return array.sort(function (a, b) {
+    var x = a[key];
+    var y = b[key];
+    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
   });
 }
 
 function generateSign(key, path, params) {
-  console.log(params);
-  params = sortByKey(params,"key")
-  console.log(params);
+  params = sortByKey(params, "key")
   let strToBeSigned = path
-  for (let i = 0; i < params.length; i++){
-    strToBeSigned += params[i].key+params[i].value
+  for (let i = 0; i < params.length; i++) {
+    strToBeSigned += params[i].key + params[i].value
   }
-  console.log(strToBeSigned);
   let hash = crypto.createHmac('sha256', key)
-  .update(strToBeSigned)
+    .update(strToBeSigned)
     .digest('hex');
-  console.log(hash.toUpperCase());
-  
+
   return hash.toUpperCase()
 }
 
-function execute(instance, request, accessToken) {
-  let params = request.params
-  params.push({ "key": "app_key", "value": instance["APP_ID"] })
-  params.push({ "key": "sign_method","value":"sha256"})
-  const timestamp = new Date().getTime()
-  params.push({ "key": "timestamp","value":timestamp})
+function post(requestURL, params) {
+  return new Promise((resolve, reject) => {
+    let paramForRequest = {}
+    for (let i = 0; i < params.length; i++) {
+      paramForRequest[params[i].key] = params[i].value
+    }
+    axios.post(requestURL, paramForRequest)
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error);
+      });
+  });
 
-  if (accessToken) {
-    params.push({ "key": "access_token","value":accessToken})
-  }
-  let requestURL = instance["URL"]
-  if (_.endsWith(requestURL, "/")) { 
-    requestURL = requestURL.substring(0, requestURL.length-1)
-  }
-  requestURL += request["PATH"]
-  let sign = generateSign(instance["SECRET_KEY"],request["PATH"],params)
-  params.push({ "key": "sign", "value": sign })
-  
-  console.log(requestURL);
-  console.log(params);
-  
+}
+
+function execute(instance, request, accessToken) {
+  return new Promise(function (resolve, reject) {
+    let params = request.params
+    params.push({
+      "key": "app_key",
+      "value": instance["APP_ID"]
+    })
+    params.push({
+      "key": "sign_method",
+      "value": "sha256"
+    })
+    const timestamp = new Date().getTime()
+    params.push({
+      "key": "timestamp",
+      "value": timestamp
+    })
+
+    if (accessToken) {
+      params.push({
+        "key": "access_token",
+        "value": accessToken
+      })
+    }
+    let requestURL = instance["URL"]
+    if (_.endsWith(requestURL, "/")) {
+      requestURL = requestURL.substring(0, requestURL.length - 1)
+    }
+    requestURL += request["PATH"]
+    let sign = generateSign(instance["SECRET_KEY"], request["PATH"], params)
+    params.push({
+      "key": "sign",
+      "value": sign
+    })
+    if (request.METHOD = "POST") {
+      try {
+        resolve(post(requestURL, params))
+      }catch(error){
+        reject(error)
+      }
+    }
+  });
+
+
 }
 
 module.exports = {
