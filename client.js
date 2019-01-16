@@ -126,8 +126,6 @@ function execute(instance, request, accessToken) {
       }
     }
   });
-
-
 }
 
 module.exports = {
