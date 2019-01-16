@@ -1,6 +1,6 @@
 {
   "name": "lazada-lib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "## Main feature  * Wrapper Request",
   "main": "main.js",
   "scripts": {
