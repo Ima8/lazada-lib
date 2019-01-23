@@ -85,9 +85,29 @@ function post(requestURL, params) {
 
 }
 
+function get(requestURL, params) {
+  return new Promise((resolve, reject) => {
+    let paramForRequest = {}
+    for (let i = 0; i < params.length; i++) {
+      paramForRequest[params[i].key] = params[i].value
+    }
+    axios.get(requestURL, { params:  paramForRequest  })
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error);
+      });
+  });
+
+}
+
 function execute(instance, request, accessToken) {
   return new Promise(function (resolve, reject) {
     let params = request.params
+    if (!params) {
+      params = []
+    }
     params.push({
       "key": "app_key",
       "value": instance["APP_ID"]
@@ -118,9 +138,15 @@ function execute(instance, request, accessToken) {
       "key": "sign",
       "value": sign
     })
-    if (request.METHOD = "POST") {
+    if (request.METHOD.toUpperCase() == "POST") {
       try {
         resolve(post(requestURL, params))
+      }catch(error){
+        reject(error)
+      }
+    } else if (request.METHOD.toUpperCase() == "GET") {
+      try {
+        resolve(get(requestURL, params))
       }catch(error){
         reject(error)
       }
