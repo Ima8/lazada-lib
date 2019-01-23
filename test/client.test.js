@@ -63,9 +63,9 @@ test('addParam3Param', () => {
 })
 
 test('executeWithPost', () => {
-  const instance = CLIENT.init("https://api.lazada.com.my/rest/", "108163", "lv4kI1dBaZhy89W5Ik0UCLnlF0itHeNR")
+  const instance = CLIENT.init("https://api.lazada.com.my/rest/", "", "")
   let request = CLIENT.initRequest("/auth/token/refresh")
-  request = CLIENT.addApiParam(request, "refresh_token", "50001101739hDPirbuReAdER4PwYgkmPoZly09cYDtThwqwTWhc1fe93ec31M")
+  request = CLIENT.addApiParam(request, "refresh_token", "")
 
   return CLIENT.execute(instance, request, "").then((res) => {
     const data = res.data
@@ -76,11 +76,11 @@ test('executeWithPost', () => {
 })
 
 test('executeWithGet', () => {
-  const instance = CLIENT.init("https://api.lazada.com.my/rest/", "108199", "JVQCDGeXIzTY1k8JxXe2VdYSZlDysli5")
+  const instance = CLIENT.init("https://api.lazada.com.my/rest/", "", "")
   let request = CLIENT.initRequest("/order/get", "GET")
-  request = CLIENT.addApiParam(request, "order_id", "200001108621696")
+  request = CLIENT.addApiParam(request, "order_id", "")
  
-  return CLIENT.execute(instance, request, "50000900b07fRtiBuzO1375234eqDa4mwFqUfxTgbbfqfPWWEfetHYFrEnMrK").then((res) => {
+  return CLIENT.execute(instance, request, "").then((res) => {
     const data = res.data
     console.log(data);
     const expectKey = ['code','request_id',"data"]
